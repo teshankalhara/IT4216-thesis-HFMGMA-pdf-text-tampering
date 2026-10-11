@@ -1,0 +1,167 @@
+\section{Introduction}
+
+This chapter provides an overview of the technical framework, datasets and algorithms for detecting the tampering of text in PDF documents. This study adopts a hybrid approach, which is the combination of font metadata analysis and glyph feature extraction from the visual characteristics of fonts, since the current two methods of font analysis for forgery only rely on font metadata analysis or visual glyph feature analysis separately without combining them, as previously analyzed in Chapter~2. The chapter first introduces an overview of the architecture of the system and then details the building of the dataset, the feature extraction pipeline (metadata-level and glyph-level), the font matching mechanism and the mathematical formulation of it, the hybrid verification stage, the machine learning model and training configuration, and, last but not least, the evaluation methodology adopted to evaluate the performance of the system.
+
+\section{System Architecture}
+
+The proposed system is based on modular 6-stage system that separates structural analysis (font metadata) signal and perceptual analysis (glyph rendering) signal and provides a single classification stage. It is intentional separation to allow each stage of the process to be tested individually, and also to allow the system to fall back to the detection based on the metadata or glyphs if one channel fails (e.g., if a PDF is missing font subsets). A summary of the pipeline is shown in Figure~\ref{fig:pdf_tampering_flow} and detailed in the following sections.
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[node distance=1.2cm, every node/.style={rectangle, draw, rounded corners, align=center, minimum width=4cm, minimum height=1cm}]
+
+    % Nodes
+    \node (input) {Input PDF Document};
+    \node (parsing) [below=of input] {PDF Parsing \\ - Extract text \\ - Extract font metadata};
+    \node (segmentation) [below=of parsing] {Text Segmentation \\ - Group text by font \\ - Create text blocks};
+    \node (feature) [below=of segmentation] {Font Feature Analysis \\ - Metadata comparison \\ - Render glyph images \\ - Extract visual features};
+    \node (matching) [below=of feature] {Font Matching Mechanism \\ - Compare font \& glyph features \\ - Flag suspicious blocks};
+    \node (hybrid) [below=of matching] {Hybrid Verification \\ (Optional / Future Scope) \\ - OCR semantic check \\ - Logical consistency};
+    \node (output) [below=of hybrid] {Detection Output \\ - Highlight tampered text \\ - Confidence score};
+
+    % Arrows
+    \draw[->, thick] (input) -- (parsing);
+    \draw[->, thick] (parsing) -- (segmentation);
+    \draw[->, thick] (segmentation) -- (feature);
+    \draw[->, thick] (feature) -- (matching);
+    \draw[->, thick] (matching) -- (hybrid);
+    \draw[->, thick] (hybrid) -- (output);
+
+\end{tikzpicture}
+\caption{Workflow of the Automated PDF Text Tampering Detection System Using Font Matching Mechanism}
+\label{fig:pdf_tampering_flow}
+\end{figure}
+
+\section{Materials and Methods}
+
+\subsection{Dataset Preparation}
+A set of PDF documents was developed, including both genuine (unaltered) and tampered documents, to ensure that the data was prepared in a similar manner as in document forensics research from the past, where a strategy was used to simulate tampering \cite{Qu2023TamperedText}. The PDFs were chosen from 3 categories of documents that are relevant to real-life fraud situations but not chosen in such a way that the trained model would overfit to a single layout style.
+
+Variants of each of the genuine documents were programatically generated to mimic tampering; the exact location of each tamper was used as the ground-truth in both supervised training and segment level precision and recall. There were four types of tampering added:
+
+\begin{itemize}
+    \item Character replacement: individual characters (e.g., digitized amounts, dates and ID numbers) were replaced, but the remainder of the layout was retained.
+    \item A similar, but different font (such as switching from Arial to Helvetica, or from a subset embedded font to a system font) was used to re-render a text block, mimicking tampering done by re-typesetting a block in a different PDF editor.
+    \item Alteration of font size (up to 2–0.5 pt) and font weight (between regular and bold) were made to single runs of text.
+    \item Spacing manipulation: character and word spacing (kerning/tracking) have been adjusted to compress or expand a text run so that it fits into the original bounding box after an edit, often a result of manual manipulation used to preserve layout.
+\end{itemize}
+
+\noindent Each document was empowered with two types of labels; one document-level label (genuine/tampered) and one segment-level label indicating the text blocks that have been tampered. The labels used in the segment level classification and in training and testing the font matching mechanism are used at the segment level, while the document level label is used in the final classification metric as reported in Chapter~4. The data was divided into train, validation and test sets in a stratified manner (by document category and tampering type) to ensure that each of these three sets contains a balanced proportion of all tampering types and document categories, and to prevent “data leakage” between data from documents used for training the model and data from documents used for testing the model.
+
+\subsection{PDF Parsing and Font Metadata Extraction}
+
+Using the module \textbf{PyMuPDF} (fitz) the following information was extracted from each text span from the PDF document: font name, font flags (bold, italic, serif, monospace), font size, character space, encoding, colour, and bounding-box coordinates. When a font is embedded as a subset, PyMuPDF's font descriptor access was used to also obtain the font's internal name and the type of embedding (Type1, TrueType, or Type0/CID-keyed); subset names (e.g., six-letter subset prefix) can also reflect inconsistencies in the editing history within a document.
+
+\noindent Spans extracted together as a result of a character level formatting change between different lines of text that also form one semantic unit (e.g., one line of the amount of a transaction) were grouped together into logical text blocks and analyzed as one analysis unit.
+
+\subsection{Glyph Rendering and Visual Feature Extraction}
+
+Each recognised text block during parsing was converted to a high-resolution (300 DPI) raster image, and each glyph was separated, normalised and rendered using the page rendering function of PyMuPDF, \textbf{OpenCV} and \textbf{Pillow (PIL)}. This is because font metadata is only a part of the equation in detecting tampering, and tampering that takes place directly in the content-stream (e.g. copying a visually similar glyph from another font that isn't added to the font dictionary).
+
+\noindent The visual features listed below were calculated for each isolated glyph, which are the same that were found to be effective in previous font-forensic studies \cite{Chen2022FontForgery,Chernyshova2018Font}.
+
+\begin{itemize}
+    \item The stroke width is roughly modelled using the distance transform of the binarized glyph mask indicating whether a glyph is bold or light in comparison to its surrounding glyphs.
+    \item Curvature profile: Curvature along the contours of glyphs sampled along the outline of the glyph, delineating rounded and angular font styles.
+    \item Aspect ratio and x-height: width to height ratio and the height of the lowercase glyphs as compared to the dominant x-height of the block, which can vary depending on the font when the point size remains constant.
+    \item \textbf{Inter-character spacing:} horizontal spacing between adjacent glyph bounding boxes, to be interpreted as how the kerning/tracking is handled.
+    \item Edge-density histogram: A coarse spatial histogram of edge pixels in the glyph cell, that is used as a light weight visual fingerprint of the rendering engine or font family.
+\end{itemize}
+
+\noindent Each text block is thus represented by two feature vectors: one called a \emph{metadata feature vector} (which contains the feature values of the font name, font size, flags, encoding, and spacing), and another called a \emph{glyph feature vector} (which contains the aggregated statistics above; computed per text block by averaging over its constituent glyphs).
+
+\subsection{Font Matching Mechanism}
+
+As opposed to classical glyph forensics \cite{Bertrand2013Intrinsic,Bertrand2015CRF} where feature vectors on scanned images are compared to the reference library, the font matching method compares feature vectors of each text block to the dominant vector derived from the PDF's native metadata. The dominant metadata profile is the mode of the categorical metadata fields across all blocks of text \(b_1, \dots, b_n\), while the dominant glyph profile is the trimmed mean, meaning that a few badly formatted blocks of metadata don't unduly influence the reference profile, of the continuous metadata fields across all blocks of text \(b_1, \dots, b_n\).
+
+\noindent For every block \(b_i\), the deviation score for the metadata is calculated as the normalized distance between the block's dominant profile and the reference profiles, as is the deviation score for the glyph.
+
+\begin{equation}
+D_{meta}(b_i) = \sum_{k} w_k \cdot \delta_k\big(m_i^{(k)}, M^{*(k)}\big)
+\label{eq:dmeta}
+\end{equation}
+
+\begin{equation}
+D_{glyph}(b_i) = \left\lVert \frac{g_i - G^{*}}{\sigma_G} \right\rVert_2
+\end{equation}
+
+\noindent Each of the \(\delta_k\) is a distance function appropriate to the kind of field it is used for - categorical mismatch indicator for font name/encoding, normalized absolute difference for numeric fields like size; for numeric fields, the Euclidean norm is calculated by scaling the field to comparable ranges using the per-feature standard deviation across all blocks of the document, denoted as \(\sigma_G\). Concretely, for a categorical field \(k\) (e.g., font name, encoding, or embedding type), \(\delta_k\) is defined as a binary mismatch indicator:
+
+\begin{equation}
+\delta_k\big(m_i^{(k)}, M^{*(k)}\big) =
+\begin{cases}
+0, & \text{if } m_i^{(k)} = M^{*(k)} \\
+1, & \text{if } m_i^{(k)} \neq M^{*(k)}
+\end{cases}
+\end{equation}
+
+\noindent so that a block's field either matches the document's dominant categorical value exactly (contributing no deviation) or differs from it (contributing the full weight \(w_k\)). For a numeric field \(k\) (e.g., font size or character spacing), \(\delta_k\) is instead defined as the absolute difference from the reference value, normalised by the per-feature standard deviation \(\sigma_k\) across all blocks of the document:
+
+\begin{equation}
+\delta_k\big(m_i^{(k)}, M^{*(k)}\big) = \frac{\left| m_i^{(k)} - M^{*(k)} \right|}{\sigma_k}
+\end{equation}
+
+\noindent This normalisation ensures that numeric fields measured on different scales (e.g., font size in points versus character spacing in pixels) contribute comparably to the weighted sum in Equation~\eqref{eq:dmeta}, rather than the field with the largest raw magnitude dominating the metadata deviation score.
+
+\noindent The two deviation scores are then weighted together to obtain a single font matching score:
+
+\begin{equation}
+S(b_i) = \alpha \cdot D_{meta}(b_i) + (1-\alpha) \cdot D_{glyph}(b_i)
+\end{equation}
+
+\noindent The value of \(\alpha \in [0,1]\) is adjusted during training on the validation partition and is meant to balance between the influence of metadata and visual evidence. In a text block, the presence of a suspicious word is detected if the sum of the signatures of its words, \(S(b_i)\), is above a threshold, \(\tau\), that is also chosen to optimise for precision and recall (Section~\ref{sec:data-analysis}). A single global threshold is not used, but instead, \(\tau\) is calculated as a function of the intra-document variance of \(S\) for each document, so that naturally diverse formatting (e.g., multi-font templates) are not over-flagged.
+
+\subsection{Hybrid Verification Framework (Optional / Future Scope)}
+
+When blocks identified by the font-matching mechanism include numeric or otherwise verifiable information (such as transaction totals, dates or ID numbers), they are optionally used for OCR-based semantic consistency checking (as shown to be effective in forgery detection in financial documents \cite{Cohen2025Forgery, Ahmed2025AIForgeries}). This step filters out what are called false positives, e.g. a total that sums up to a different value than the actual total, or a date that falls outside of a reasonable range, by cross checking the recognised text against simple logical filtering, and elevates the confidence of blocks that are flagged for content that is also semantically dubious. This layer is designed as an optional addition to the core font-matching pipeline rather than a required stage: it was implemented and is described here as part of the proposed architecture, but it was not fully integrated into the evaluation reported in Chapter~4, and it is therefore treated as future scope rather than a validated component of the current system (see the discussion in Section~\ref{sec:limitations}).
+
+\subsection{Machine Learning Model and Training Configuration}
+
+Finally, the feature vector representation of each text block is created by combining the metadata feature vector, the glyph feature vector, the deviation scores $D_{meta}$ and $D_{glyph}$, and the font matching score $S(b_i)$. These concatenated feature vectors were then fed to a \textbf{scikit-learn} Random Forest Classifier for classification and assigning each text block to a real or forged text type. This method was chosen since, according to earlier research, the classifiers developed on combined visual and structural feature vectors yield better performance than rule-based validation techniques \cite{Ahmed2025AIForgeries,Kumar2025RealTimeFraud}. For this step, a random forest was chosen instead of a deep convolutional neural network for training because of the following reasons: The model is light-weight because it does not deal with raw pixel data but is already based on pre-engineered tabular data, it is less likely to overfit on a medium sized artificial dataset and it has the ability to analyse feature importance, which is required in order to meet the requirement of explainability.\\
+
+\noindent The number of trees, depth of the trees, minimum samples per leaf and weight of classes were optimized by stratified k-fold cross validation on the training data, and the two classes (real blocks and forged blocks) were balanced. The held-out test partition was only used for final reporting, while the validation partition was used for threshold selection (α and τ).
+
+\subsection{Explainability Output}
+
+For each block labeled as "tampered" the system prints out: the block score \(S(b_i)\), the contributions made by the metadata and the glyph components, and the most important individual features for the prediction, as determined by the trained random forest's feature importances for that prediction. The explainability gap highlighted in previous forensic AI studies \cite{Luo2024Explainable,Nikkel2020Fintech} is addressed by highlighting the corresponding region of the page image with a bounding box and an associated confidence score, which enables a human auditor to check the basis for each detection instead of an opaque binary result.
+
+\section{Data Analysis}
+\label{sec:data-analysis}
+
+\subsection{Quantitative Performance Metrics}
+
+The effectiveness of the proposed method is tested in two parts: the first at the level of text fragments; the second at the level of the entire documents marked as real or fake. The analysis is done using classification statistics based on the confusion matrix consisting of the parameters TP, FP, TN, FN.
+
+\begin{equation}
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+\end{equation}
+
+\begin{equation}
+\text{Precision} = \frac{TP}{TP + FP}, \qquad \text{Recall} = \frac{TP}{TP + FN}
+\end{equation}
+
+\begin{equation}
+F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\end{equation}
+
+\noindent The results of the precision and recall are reported separately because the two kinds of classification errors have different practical consequences in this application. A false negative, in which a tampered block is not detected, is more critical since the primary purpose of the system is being affected. Conversely, a false positive – when a legitimate block is attributed as if it were tampered with – only add to the auditors' burden and won't directly help fraud. In addition, the system is tested at several decision thresholds τ, and evaluated by a precision--recall curve rather than just a single operating point. This can then be tuned to the risk profile of the deployment. In other cases, it might be important for a financial institution to ensure that it recalls more, even if it has to spend more time on manual review.
+
+\subsection{Ablation Analysis}
+
+To quantify the individual contribution of each analysis channel, the system is additionally evaluated under three restricted configurations: metadata-only (α=1), glyph-only (α=0), and the full hybrid configuration with α tuned using the validation set. A direct comparison of these configurations is performed to test the central hypothesis underlying this study, namely that better performance is achieved by combining metadata and glyph analysis than by using either analysis channel independently \cite{Chen2022FontForgery,Zhang2023PDFLayout}.
+
+\subsection{Error Analysis}
+
+Text blocks are manually checked for misclassifications and patterns of systematic failure are detected. Particular emphasis is given to those font changes that are similar, such as the use of a font that is visually close to the original; font changes where more than one font are used in the same document, which may lead to a higher metadata deviation score of the legitimate blocks; and very short text blocks (e.g., less than 10 pixels), where the statistical analysis of glyphs is not reliable due to the few pixels available for calculation of glyph features.
+
+\subsection{System Robustness Testing}
+
+To ensure that the test is applicable to the large number of types of documents, as mentioned in Section~5.1, the model is tested with PDF documents of different page layouts, font families, point sizes, and document types (e.g., transaction slip, certificates, licenses, etc.) with the same robustness evaluation approach adopted in related real time detection studies \cite{Kumar2025RealTimeFraud}. Robustness is also tested when re-save or print-to-PDF transformation operations are performed on a PDF, both of which transform a PDF but are not malicious and can affect the characteristics of the font embedding.
+
+\subsection{Explainability Assessment}
+
+In addition to quantitative accuracy, qualitative assessments of the explainability output in Section~3.7 are conducted by checking if the regions that are highlighted are in the correct position and consist of the same features as the injected tampering in the test set. This way, a proxy measure of usefulness of the generated explanations to human auditors is obtained, and not just the raw classification performance.
+
+\section{Summary}
+
+The materials, tools and processes involved in the development and evaluation of the proposed hybrid font-metadata-and-glyph-matching detection system have been described in this chapter. To verify the above procedures, a labeled synthetic PDF set was created and passed through a 6-step process involving parsing of the PDFs, extraction of font metadata, rendering of glyphs, visual feature extraction, computation of the mathematically formulated font-matching score, and (optionally) OCR-based hybrid verification, followed by classification using a Random Forest algorithm, as shown in Figure~\ref{fig:pdf_tampering_flow}. In addition, a hybrid evaluation approach based on segment level classification scores and document level classification scores was used, an ablation study was conducted to determine the effect of metadata and glyph analysis, robustness test sets were selected to verify the system's performance on different document types and benign PDF transformations, and a qualitative assessment of the explainability of the system was performed. The alignment to the objectives given in Chapter~1 and the identified research gaps in Chapter~2 are guaranteed using this evaluation framework. 

@@ -1,0 +1,10 @@
+\begin{center}
+    \textbf{\LARGE ABSTRACT}\\[40pt]
+\end{center}
+PDF is the standard format for documents in government offices, courts, schools and banks globally on a daily basis. For this reason, they can easily be subject to fraudulent alterations. To the naked eye, an attacker could make it look exactly the same, but change words, numbers or font within a pdf file. These types of imperceptible modifications cannot be detected by manual review or simple text scanning.\\
+
+\noindent In this study, an automated system is proposed to detect tampered text in PDF document by combining two features: the font data inside the PDF document and the visual appearance of text characters. The system reads a pdf and extracts the text from it with details about font (font name, font size, font encoding). It then converts these characters into images and \mbox{verifies} the visual elements such as stroke thickness, letter shape and spacing. It can identify text that doesn't seem to belong with the rest of the document based on these features throughout the document.\\
+
+\noindent An optional extra step involves using text recognition technology to verify if numbers and/or words are sensible. The system uses a machine learning model to assist in making more \mbox{accurate} decisions by using real samples and tampered samples of documents. If a suspicious item is found, the system will draw attention to the item right on the document and provide a confidence level to indicate to a human reviewer what was flagged and why.\\
+
+\noindent The aim is to create a useful solution that can be implemented across a variety of document types, like bank statements, academic certificates, vehicle records, legal documents, and more, for organizations to stop document fraud before it can actually harm them.

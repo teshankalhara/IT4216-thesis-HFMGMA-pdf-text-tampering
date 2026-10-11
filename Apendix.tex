@@ -1,0 +1,318 @@
+\begin{center}
+    \large{\textbf{APPENDICES}}
+\end{center}
+
+\appendix
+
+\appcaption{Appendix A: Dataset Generation Script}
+\noindent
+\textbf{Appendix A: Dataset Generation Script}
+
+\noindent
+In this appendix, the Python script that was used to generate the synthetic PDF dataset (Step 1) is presented. This script was used to create 2,500 PDF documents, made up of 500 genuine documents and 2,000 tampered documents, spread across five document types and four tampering methods. Only the core tampering functions are shown below, since these directly implement the four tampering methods described in Chapter~3.
+
+\small
+\begin{verbatim}
+def create_tampered_font_change(original_content, filename):
+    """Tamper by changing font"""
+    c = canvas.Canvas(filename, pagesize=letter)
+    width, height = letter
+    y = height - 50
+
+    for line in original_content:
+        if any(keyword in line for keyword in
+               ['$', 'Balance', 'Total', 'Amount', 'Value', 'Due']):
+            c.setFont("Times-Bold", 11)
+            c.drawString(50, y, line)
+            c.setFont("Helvetica", 10)
+        else:
+            c.drawString(50, y, line)
+        y -= 15
+        if y < 50:
+            c.showPage()
+            y = height - 50
+    c.save()
+
+def create_tampered_char_replace(original_content, filename):
+    """Tamper by replacing characters"""
+    c = canvas.Canvas(filename, pagesize=letter)
+    width, height = letter
+    y = height - 50
+    c.setFont("Helvetica", 10)
+
+    for line in original_content:
+        amounts = re.findall(r'\$[\d,]+\.?\d*', line)
+        for amount in amounts:
+            num = float(amount.replace('$', '').replace(',', ''))
+            new_amount = f"${num * 10:,.2f}"
+            line = line.replace(amount, new_amount)
+        c.drawString(50, y, line)
+        y -= 15
+        if y < 50:
+            c.showPage()
+            y = height - 50
+    c.save()
+
+def create_tampered_embedding(original_content, filename):
+    """Tamper with font embedding"""
+    c = canvas.Canvas(filename, pagesize=letter)
+    width, height = letter
+    y = height - 50
+
+    for i, line in enumerate(original_content):
+        if i % 3 == 0:
+            c.setFont("Times-Roman", 10)
+        elif i % 3 == 1:
+            c.setFont("Courier", 10)
+        else:
+            c.setFont("Helvetica", 10)
+        c.drawString(50, y, line)
+        y -= 15
+        if y < 50:
+            c.showPage()
+            y = height - 50
+    c.save()
+\end{verbatim}
+
+\vspace{.2in}
+
+\appcaption{Appendix B: Font Metadata Extraction Script}
+\noindent
+\textbf{Appendix B: Font Metadata Extraction Script}
+
+\noindent
+In this appendix, the core logic that was used in Step 2 to extract font metadata from each PDF using PyMuPDF is shown. For every text span found on every page, the font name, font size, and font type were recorded, and these values were later used to compute the dominant font ratio and font variance features described in Chapter~3.
+
+\small
+\begin{verbatim}
+def extract_font_metadata(pdf_path):
+    """
+    Extract comprehensive font metadata from a PDF file
+    """
+    doc = fitz.open(pdf_path)
+    font_data = {
+        'font_names': [], 'font_sizes': [],
+        'font_encodings': [], 'font_types': [],
+        'per_page_fonts': [], 'total_pages': len(doc),
+        'text_blocks': 0
+    }
+
+    for page_num, page in enumerate(doc):
+        blocks = page.get_text("dict")
+        page_fonts = []
+
+        for block in blocks.get("blocks", []):
+            for line in block.get("lines", []):
+                for span in line.get("spans", []):
+                    font_name = span.get("font", "unknown")
+                    font_size = span.get("size", 0)
+                    font_flags = span.get("flags", 0)
+                    text = span.get("text", "").strip()
+
+                    if text:
+                        font_data['font_names'].append(font_name)
+                        font_data['font_sizes'].append(font_size)
+                        font_data['text_blocks'] += 1
+                        page_fonts.append(font_name)
+
+                        if font_flags & 1 << 0:
+                            font_type = "Monospaced"
+                        elif font_flags & 1 << 3:
+                            font_type = "Serif"
+                        else:
+                            font_type = "Sans-Serif"
+                        font_data['font_types'].append(font_type)
+
+        font_data['per_page_fonts'].append(page_fonts)
+
+    doc.close()
+    return font_data
+\end{verbatim}
+
+\vspace{.2in}
+
+\appcaption{Appendix C: Glyph Feature Extraction Script}
+\noindent
+\textbf{Appendix C: Glyph Feature Extraction Script}
+
+\noindent
+In this appendix, the core logic used in Step 3 to extract visual glyph features from rendered PDF pages is presented. Each page was rendered as an image at 2$\times$ zoom using PyMuPDF, and OpenCV was then used to measure stroke width, text density, and other visual properties from the rendered image.
+
+\small
+\begin{verbatim}
+def extract_glyph_features_from_pdf(pdf_path):
+    """
+    Extract visual glyph features from PDF pages
+    """
+    doc = fitz.open(pdf_path)
+    glyph_features = {
+        'avg_stroke_width': [], 'text_density': [],
+        'spacing_variance': [], 'sharpness_scores': [],
+        'contrast_scores': []
+    }
+
+    num_pages = min(len(doc), 3)
+
+    for page_num in range(num_pages):
+        page = doc[page_num]
+        zoom = 2
+        mat = fitz.Matrix(zoom, zoom)
+        pix = page.get_pixmap(matrix=mat, alpha=False)
+
+        img = np.frombuffer(pix.samples, dtype=np.uint8) \
+                .reshape(pix.height, pix.width, 3)
+        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+
+        _, binary = cv2.threshold(
+            gray, 200, 255, cv2.THRESH_BINARY_INV)
+        contours, _ = cv2.findContours(
+            binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        stroke_widths = [cv2.boundingRect(c)[2] for c in contours]
+        if stroke_widths:
+            avg_width = np.mean(stroke_widths)
+            glyph_features['avg_stroke_width'].append(avg_width)
+
+    doc.close()
+    return glyph_features
+\end{verbatim}
+
+\vspace{.2in}
+
+\appcaption{Appendix D: Random Forest Detection Model}
+\noindent
+\textbf{Appendix D: Random Forest Detection Model}
+
+\noindent
+In this appendix, the code used in Step 4 to train the Random Forest classifier on the combined font and glyph feature set is shown. This is the model that achieved an accuracy of 82.8\%, as reported in Chapter~4.
+
+\small
+\begin{verbatim}
+def create_ml_model(df):
+    """Create a machine learning model for better detection"""
+
+    feature_cols = [
+        'dominant_font_ratio', 'unique_fonts', 'font_variance',
+        'tampering_score_prelim', 'avg_space_ratio',
+        'font_size_variance', 'space_ratio_std',
+        'glyph_consistency_score'
+    ]
+
+    X = df[feature_cols].fillna(0)
+    y = (df['label'] == 'tampered').astype(int)
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y)
+
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    rf = RandomForestClassifier(n_estimators=100, max_depth=10,
+                                 random_state=42)
+    rf.fit(X_train_scaled, y_train)
+
+    y_pred = rf.predict(X_test_scaled)
+
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+
+    return rf, scaler, accuracy
+\end{verbatim}
+
+\vspace{.2in}
+
+\appcaption{Appendix E: Sample Ground Truth Labels}
+\noindent
+\textbf{Appendix E: Sample Ground Truth Labels}
+
+\noindent
+In this appendix, a sample of the ground truth CSV file that was generated during dataset creation is shown. This file was used to record the label, tampering type, and document type for every PDF in the dataset, and it served as the basis for training and evaluating the detection models.
+
+\begin{table}[H]
+    \centering
+    \caption{Sample Rows from \texttt{dataset/ground\_truth/labels.csv}}
+    \small
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabular}{@{}p{6.5cm}p{1.5cm}p{3.2cm}p{1.6cm}@{}} \hline
+        \textbf{Filename} & \textbf{Label} & \textbf{Tampering Type} & \textbf{Doc. Type} \\ \hline
+        \raggedright\path{genuine/invoice_0001_genuine.pdf} & genuine & none & invoice \\
+        \raggedright\path{tampered/font_change/invoice_0001_tampered.pdf} & tampered & \raggedright font\_\allowbreak change & invoice \\
+        \raggedright\path{tampered/character_replace/invoice_0001_tampered.pdf} & tampered & \raggedright character\_\allowbreak replace & invoice \\
+        \raggedright\path{tampered/spacing_alter/invoice_0001_tampered.pdf} & tampered & \raggedright spacing\_\allowbreak alter & invoice \\
+        \raggedright\path{tampered/embedding_mismatch/invoice_0001_tampered.pdf} & tampered & \raggedright embedding\_\allowbreak mismatch & invoice \\ \hline
+    \end{tabular}
+    \label{tab:appendix_ground_truth}
+\end{table}
+
+\vspace{.2in}
+
+\appcaption{Appendix F: Extracted Feature Columns}
+\noindent
+\textbf{Appendix F: Extracted Feature Columns}
+
+\noindent
+In this appendix, the full list of features that were extracted and used for detection is presented. These features were produced by merging the outputs of Step 2 (font metadata) and Step 3 (glyph features), and this combined feature set was the direct input to the Random Forest model shown in Appendix D.
+
+\begin{quote}
+\footnotesize
+\begin{itemize}
+    \item \textbf{Font metadata features:} \texttt{total\_pages}, \texttt{text\_blocks}, \texttt{unique\_fonts}, \texttt{dominant\_font}, \texttt{dominant\_font\_ratio}, \texttt{font\_variance}, \texttt{unique\_font\_sizes}, \texttt{dominant\_font\_size}, \texttt{multiple\_fonts\_per\_page}, \texttt{rare\_fonts\_count}
+
+    \item \textbf{Glyph and layout features:} \texttt{total\_chars}, \texttt{avg\_line\_length}, \texttt{avg\_word\_length}, \texttt{avg\_space\_ratio}, \texttt{space\_ratio\_std}, \texttt{avg\_font\_size}, \texttt{font\_size\_std}, \texttt{avg\_char\_width}, \texttt{char\_width\_std}, \texttt{text\_density}, \texttt{spacing\_irregularity}, \texttt{font\_size\_variance}, \texttt{glyph\_consistency\_score}
+
+    \item \textbf{Labels:} \texttt{filename}, \texttt{label}, \texttt{tampering\_type}, \texttt{doc\_type}
+\end{itemize}
+\end{quote}
+
+\vspace{.2in}
+
+\appcaption{Appendix G: Research Summary Output}
+\noindent
+\textbf{Appendix G: Research Summary Output}
+
+\noindent
+In this appendix, the final summary that was generated automatically at the end of the detection pipeline is reproduced. This summary was used as the basis for the results presented and discussed in Chapter~4.
+
+\small
+\begin{verbatim}
+PDF TEXT TAMPERING DETECTION - RESEARCH SUMMARY
+Hybrid Font Metadata and Glyph Matching Algorithm
+============================================================
+
+DATASET OVERVIEW
+Total PDFs: 2500
+Genuine Documents: 500
+Tampered Documents: 2000
+
+TAMPERING METHODS
+font_change: 500 PDFs
+character_replace: 500 PDFs
+spacing_alter: 500 PDFs
+embedding_mismatch: 500 PDFs
+
+DETECTION RESULTS
+Rule-Based Detection Accuracy: 24.4%
+Machine Learning Accuracy: 82.8%
+
+PERFORMANCE BY DOCUMENT TYPE
+invoice: 80.0%
+bank_statement: 80.0%
+vehicle_registration: 80.0%
+legal_contract: 60.0%
+academic_certificate: 80.0%
+
+PERFORMANCE BY TAMPERING TYPE
+font_change: 100.0%
+character_replace: 78.0%
+spacing_alter: 78.0%
+embedding_mismatch: 100.0%
+
+KEY FINDINGS
+1. Font consistency is the strongest indicator of tampering
+2. Embedding mismatch tampering is easiest to detect
+3. Character replacement requires more sophisticated detection
+4. Machine learning improves detection accuracy
+\end{verbatim}

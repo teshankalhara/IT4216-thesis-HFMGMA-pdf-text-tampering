@@ -1,0 +1,468 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{Qu2023TamperedText}{inproceedings}{}{}
+      \name{author}{7}{}{%
+        {{hash=4facb6692983a89a50b54941b11c7cce}{%
+           family={Qu},
+           familyi={Q\bibinitperiod},
+           given={Chenguang},
+           giveni={C\bibinitperiod}}}%
+        {{hash=958fe38be0227c69d659edae965053cc}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Chuanshuo},
+           giveni={C\bibinitperiod}}}%
+        {{hash=28771f5499dd0b1dd7885d617fd600dd}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Yuliang},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=470559378a2b33482970869d1b7f1699}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Xinyu},
+           giveni={X\bibinitperiod}}}%
+        {{hash=a1f15698f6b26d75d2315b6d561ad092}{%
+           family={Peng},
+           familyi={P\bibinitperiod},
+           given={Dezhi},
+           giveni={D\bibinitperiod}}}%
+        {{hash=8ea5ecf5c7141a124a90a6a21c955b9b}{%
+           family={Guo},
+           familyi={G\bibinitperiod},
+           given={Fengjun},
+           giveni={F\bibinitperiod}}}%
+        {{hash=13b7cf344c5e6e3720ba8de1d82b41d9}{%
+           family={Jin},
+           familyi={J\bibinitperiod},
+           given={Lianwen},
+           giveni={L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{76e8a3152512f239774a38a9d848ac8c}
+      \strng{fullhash}{183f2a524769bacdd9385540421d779b}
+      \strng{fullhashraw}{183f2a524769bacdd9385540421d779b}
+      \strng{bibnamehash}{76e8a3152512f239774a38a9d848ac8c}
+      \strng{authorbibnamehash}{76e8a3152512f239774a38a9d848ac8c}
+      \strng{authornamehash}{76e8a3152512f239774a38a9d848ac8c}
+      \strng{authorfullhash}{183f2a524769bacdd9385540421d779b}
+      \strng{authorfullhashraw}{183f2a524769bacdd9385540421d779b}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2023 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}
+      \field{title}{Towards Robust Tampered Text Detection in Document Image: New Dataset and New Solution}
+      \field{year}{2023}
+      \field{pages}{5937\bibrangedash 5946}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1109/CVPR52729.2023.00575
+      \endverb
+    \endentry
+    \entry{Kumar2025RealTimeFraud}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=40faa1bc69980517511d12eb5ab3c8bb}{%
+           family={Kumar},
+           familyi={K\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=b8812d5710d5f4148ed606f77dbbd8a4}{%
+           family={Singh},
+           familyi={S\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{6b9db4b8014e676845af5ba366795fb7}
+      \strng{fullhash}{6b9db4b8014e676845af5ba366795fb7}
+      \strng{fullhashraw}{6b9db4b8014e676845af5ba366795fb7}
+      \strng{bibnamehash}{6b9db4b8014e676845af5ba366795fb7}
+      \strng{authorbibnamehash}{6b9db4b8014e676845af5ba366795fb7}
+      \strng{authornamehash}{6b9db4b8014e676845af5ba366795fb7}
+      \strng{authorfullhash}{6b9db4b8014e676845af5ba366795fb7}
+      \strng{authorfullhashraw}{6b9db4b8014e676845af5ba366795fb7}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ResearchGate}
+      \field{title}{Advanced Deep Learning for Real-Time Fraud Detection in Banking: Scalable and High-Accuracy Solutions}
+      \field{year}{2025}
+      \verb{urlraw}
+      \verb https://www.researchgate.net/publication/395274938_Advanced_Deep_Learning_for_Real-Time_Fraud_Detection_in_Banking_Scalable_and_High-Accuracy_Solutions
+      \endverb
+      \verb{url}
+      \verb https://www.researchgate.net/publication/395274938_Advanced_Deep_Learning_for_Real-Time_Fraud_Detection_in_Banking_Scalable_and_High-Accuracy_Solutions
+      \endverb
+    \endentry
+    \entry{Ahmed2025AIForgeries}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=fde8792ec7d2823373ea27f21e256a49}{%
+           family={Ahmed},
+           familyi={A\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+        {{hash=0e459862e8dbf21a16ed1c0b9746d29c}{%
+           family={Khan},
+           familyi={K\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{74f6d42b5e94f3133b46796c5baded51}
+      \strng{fullhash}{74f6d42b5e94f3133b46796c5baded51}
+      \strng{fullhashraw}{74f6d42b5e94f3133b46796c5baded51}
+      \strng{bibnamehash}{74f6d42b5e94f3133b46796c5baded51}
+      \strng{authorbibnamehash}{74f6d42b5e94f3133b46796c5baded51}
+      \strng{authornamehash}{74f6d42b5e94f3133b46796c5baded51}
+      \strng{authorfullhash}{74f6d42b5e94f3133b46796c5baded51}
+      \strng{authorfullhashraw}{74f6d42b5e94f3133b46796c5baded51}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ResearchGate}
+      \field{note}{Proposes a hybrid approach using visual and textual features}
+      \field{title}{{AI}-Based Document Forgery Detection Using {OCR} and Convolutional Neural Networks}
+      \field{year}{2025}
+      \verb{urlraw}
+      \verb https://www.researchgate.net/publication/397528338_AI-Based_Document_Forgery_Detection_Using_OCR_and_Convolutional_Neural_Networks
+      \endverb
+      \verb{url}
+      \verb https://www.researchgate.net/publication/397528338_AI-Based_Document_Forgery_Detection_Using_OCR_and_Convolutional_Neural_Networks
+      \endverb
+    \endentry
+    \entry{Nikkel2020Fintech}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=4cf39b283c39096a73a571f48aaf4680}{%
+           family={Nikkel},
+           familyi={N\bibinitperiod},
+           given={Bruce},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{4cf39b283c39096a73a571f48aaf4680}
+      \strng{fullhash}{4cf39b283c39096a73a571f48aaf4680}
+      \strng{fullhashraw}{4cf39b283c39096a73a571f48aaf4680}
+      \strng{bibnamehash}{4cf39b283c39096a73a571f48aaf4680}
+      \strng{authorbibnamehash}{4cf39b283c39096a73a571f48aaf4680}
+      \strng{authornamehash}{4cf39b283c39096a73a571f48aaf4680}
+      \strng{authorfullhash}{4cf39b283c39096a73a571f48aaf4680}
+      \strng{authorfullhashraw}{4cf39b283c39096a73a571f48aaf4680}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Forensic Science International: Digital Investigation}
+      \field{title}{Fintech Forensics: Criminal Investigation and Digital Evidence in Financial Technologies}
+      \field{volume}{33}
+      \field{year}{2020}
+      \field{pages}{200908}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.fsidi.2020.200908
+      \endverb
+    \endentry
+    \entry{Cohen2025Forgery}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=d80d955cb2a9c5dfef1db3ce98df061d}{%
+           family={Cohen},
+           familyi={C\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=1092bea4794f1442a19629682ac3b241}{%
+           family={Afzal},
+           familyi={A\bibinitperiod},
+           given={M.\bibnamedelimi Z.},
+           giveni={M\bibinitperiod\bibinitdelim Z\bibinitperiod}}}%
+      }
+      \strng{namehash}{f4df5a135963770c777e97ee26c6061e}
+      \strng{fullhash}{f4df5a135963770c777e97ee26c6061e}
+      \strng{fullhashraw}{f4df5a135963770c777e97ee26c6061e}
+      \strng{bibnamehash}{f4df5a135963770c777e97ee26c6061e}
+      \strng{authorbibnamehash}{f4df5a135963770c777e97ee26c6061e}
+      \strng{authornamehash}{f4df5a135963770c777e97ee26c6061e}
+      \strng{authorfullhash}{f4df5a135963770c777e97ee26c6061e}
+      \strng{authorfullhashraw}{f4df5a135963770c777e97ee26c6061e}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ResearchGate}
+      \field{note}{Focuses on suppressing image content to highlight manipulation traces}
+      \field{title}{Document Forgery Detection using {OCR} and Deep Learning}
+      \field{year}{2025}
+      \verb{urlraw}
+      \verb https://www.researchgate.net/publication/397657878_Document_Forgery_Detection_using_OCR_and_Deep_Learning
+      \endverb
+      \verb{url}
+      \verb https://www.researchgate.net/publication/397657878_Document_Forgery_Detection_using_OCR_and_Deep_Learning
+      \endverb
+    \endentry
+    \entry{Luo2024Explainable}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=af1f2e572b642c04ff06fdf37b5a218c}{%
+           family={Luo},
+           familyi={L\bibinitperiod},
+           given={Canjie},
+           giveni={C\bibinitperiod}}}%
+        {{hash=28771f5499dd0b1dd7885d617fd600dd}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Yuliang},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{20de92c810dbce34391374a8aa22d5a1}
+      \strng{fullhash}{20de92c810dbce34391374a8aa22d5a1}
+      \strng{fullhashraw}{20de92c810dbce34391374a8aa22d5a1}
+      \strng{bibnamehash}{20de92c810dbce34391374a8aa22d5a1}
+      \strng{authorbibnamehash}{20de92c810dbce34391374a8aa22d5a1}
+      \strng{authornamehash}{20de92c810dbce34391374a8aa22d5a1}
+      \strng{authorfullhash}{20de92c810dbce34391374a8aa22d5a1}
+      \strng{authorfullhashraw}{20de92c810dbce34391374a8aa22d5a1}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint arXiv:2412.14816}
+      \field{note}{Discusses multimodal approaches to identifying tampered regions}
+      \field{title}{Explainable Tampered Text Detection via Multimodal Large Models}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2412.14816
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2412.14816
+      \endverb
+    \endentry
+    \entry{Zhang2023PDFLayout}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=614fdf51ce9628d993d9e0dc779c15a2}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Yifan},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=f27ec46ccd272a021fd78bdac92dd490}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Wei},
+           giveni={W\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{c7f52bfd6fe3b28cee7e579db916f73b}
+      \strng{fullhash}{c7f52bfd6fe3b28cee7e579db916f73b}
+      \strng{fullhashraw}{c7f52bfd6fe3b28cee7e579db916f73b}
+      \strng{bibnamehash}{c7f52bfd6fe3b28cee7e579db916f73b}
+      \strng{authorbibnamehash}{c7f52bfd6fe3b28cee7e579db916f73b}
+      \strng{authornamehash}{c7f52bfd6fe3b28cee7e579db916f73b}
+      \strng{authorfullhash}{c7f52bfd6fe3b28cee7e579db916f73b}
+      \strng{authorfullhashraw}{c7f52bfd6fe3b28cee7e579db916f73b}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the International Conference on Document Analysis and Recognition (ICDAR)}
+      \field{note}{Analyzes layout, spacing, and font inconsistencies in structured PDF documents}
+      \field{title}{Structural and Layout-Based Analysis for PDF Document Forgery Detection}
+      \field{year}{2023}
+      \field{pages}{1123\bibrangedash 1134}
+      \range{pages}{12}
+    \endentry
+    \entry{Bertrand2013Intrinsic}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=408f645462425f523a6ba2871386fecf}{%
+           family={Bertrand},
+           familyi={B\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=c67ef3453c5ad6aaeceb80a39330d5bf}{%
+           family={Chupeau},
+           familyi={C\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+        {{hash=f09e6027c5ca67b9cf6e2fedec777e21}{%
+           family={Gomez-Krämer},
+           familyi={G\bibinithyphendelim K\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{a00ed0cba9dcdbcf84530161586771d5}
+      \strng{fullhash}{ad1dce79c8354cbef3f5ffc44780ea73}
+      \strng{fullhashraw}{ad1dce79c8354cbef3f5ffc44780ea73}
+      \strng{bibnamehash}{ad1dce79c8354cbef3f5ffc44780ea73}
+      \strng{authorbibnamehash}{ad1dce79c8354cbef3f5ffc44780ea73}
+      \strng{authornamehash}{a00ed0cba9dcdbcf84530161586771d5}
+      \strng{authorfullhash}{ad1dce79c8354cbef3f5ffc44780ea73}
+      \strng{authorfullhashraw}{ad1dce79c8354cbef3f5ffc44780ea73}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{EURASIP Journal on Information Security}
+      \field{number}{1}
+      \field{title}{A System Based on Intrinsic Features for Fraudulent Document Detection}
+      \field{volume}{2013}
+      \field{year}{2013}
+      \field{pages}{1\bibrangedash 15}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.1186/1687-417X-2013-18
+      \endverb
+    \endentry
+    \entry{Bertrand2015CRF}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=408f645462425f523a6ba2871386fecf}{%
+           family={Bertrand},
+           familyi={B\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=f09e6027c5ca67b9cf6e2fedec777e21}{%
+           family={Gomez-Krämer},
+           familyi={G\bibinithyphendelim K\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{d3cfc1d06bb603478f33b73f232c1379}
+      \strng{fullhash}{d3cfc1d06bb603478f33b73f232c1379}
+      \strng{fullhashraw}{d3cfc1d06bb603478f33b73f232c1379}
+      \strng{bibnamehash}{d3cfc1d06bb603478f33b73f232c1379}
+      \strng{authorbibnamehash}{d3cfc1d06bb603478f33b73f232c1379}
+      \strng{authornamehash}{d3cfc1d06bb603478f33b73f232c1379}
+      \strng{authorfullhash}{d3cfc1d06bb603478f33b73f232c1379}
+      \strng{authorfullhashraw}{d3cfc1d06bb603478f33b73f232c1379}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal on Document Analysis and Recognition}
+      \field{number}{4}
+      \field{title}{A Conditional Random Field Model for Font Forgery Detection}
+      \field{volume}{18}
+      \field{year}{2015}
+      \field{pages}{345\bibrangedash 356}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1007/s10032-015-0244-6
+      \endverb
+    \endentry
+    \entry{Chernyshova2018Font}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=a8283ae0cd33f2ab87365136abb93737}{%
+           family={Chernyshova},
+           familyi={C\bibinitperiod},
+           given={Y.},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=a7ac069612e556a54a2b89515e16afa1}{%
+           family={Bulacu},
+           familyi={B\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=9952e8fc80921b0c11529174fb0ad86c}{%
+           family={Schomaker},
+           familyi={S\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{d3bd07411941a57282072ff65bb0bf21}
+      \strng{fullhash}{c6e6c5caee7ac27b8ece63a391cfd993}
+      \strng{fullhashraw}{c6e6c5caee7ac27b8ece63a391cfd993}
+      \strng{bibnamehash}{c6e6c5caee7ac27b8ece63a391cfd993}
+      \strng{authorbibnamehash}{c6e6c5caee7ac27b8ece63a391cfd993}
+      \strng{authornamehash}{d3bd07411941a57282072ff65bb0bf21}
+      \strng{authorfullhash}{c6e6c5caee7ac27b8ece63a391cfd993}
+      \strng{authorfullhashraw}{c6e6c5caee7ac27b8ece63a391cfd993}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Pattern Recognition Letters}
+      \field{title}{Font Recognition for Identity Document Forgery Detection}
+      \field{volume}{121}
+      \field{year}{2019}
+      \field{pages}{84\bibrangedash 91}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1016/j.patrec.2018.11.021
+      \endverb
+    \endentry
+    \entry{Chen2022FontForgery}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=dd060cd064f8f607eb1bee6712820270}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Hao},
+           giveni={H\bibinitperiod}}}%
+        {{hash=2bb35bf59aaca26e59bbdb0d0192f3b3}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Jian},
+           giveni={J\bibinitperiod}}}%
+        {{hash=b1dd1a9ff59cc6aeba590fc68bcc39cf}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={Wei},
+           giveni={W\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{34bcb9ba6216c3c32c851b701b4b5b33}
+      \strng{fullhash}{1aa50602442205dc966a8f0056398dfa}
+      \strng{fullhashraw}{1aa50602442205dc966a8f0056398dfa}
+      \strng{bibnamehash}{1aa50602442205dc966a8f0056398dfa}
+      \strng{authorbibnamehash}{1aa50602442205dc966a8f0056398dfa}
+      \strng{authornamehash}{34bcb9ba6216c3c32c851b701b4b5b33}
+      \strng{authorfullhash}{1aa50602442205dc966a8f0056398dfa}
+      \strng{authorfullhashraw}{1aa50602442205dc966a8f0056398dfa}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Pattern Recognition Letters}
+      \field{note}{Demonstrates font metadata and glyph-level inconsistencies as indicators of document tampering}
+      \field{title}{Font-Level Feature Analysis for Document Authentication and Forgery Detection}
+      \field{volume}{158}
+      \field{year}{2022}
+      \field{pages}{45\bibrangedash 53}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1016/j.patrec.2022.03.012
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

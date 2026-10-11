@@ -1,0 +1,125 @@
+\section{Background and Motivation}
+
+With the use of Portable Document Format (PDF) file format becoming common in the financial, legal, educational, and government industries, it is regarded as one of the most reliable formats for storing and exchanging official digital documents. Official documents like bank transaction receipts, vehicle ownership papers, education transcripts, certificates, business licenses, and legal contracts are commonly shared and stored in PDF format since the format retains the document's structure and typography, which remain unchanged regardless of the computer software used for viewing and printing. In consequence, the PDF format is considered reliable and resistant to any manipulation or alterations of the contents. Nevertheless, with advanced editing capabilities, it has become increasingly easy to manipulate text contents without altering the document's structure and format \cite{Qu2023TamperedText}.\\
+
+\noindent Traditional methods of verifying documents are usually dependent on visual checking, metadata examination, and some form of consistency checking. In the case of visual checking, the documents undergo an examination of their format, alignment, and textual content in order to discover any inconsistencies. Metadata techniques involve checking information about the PDF, including font names, font subsets, software used to create and modify the documents, as well as objects that have been embedded within them. Despite their ability to detect any visible indications of the manipulation, traditional techniques cannot detect a sophisticated process of modifying only a few characters, words, numerical values, or dates without changing the whole look of the document. Consequently, manipulations, including font replacement, replacement of some characters, changes in spacing, or even carefully matched formats, can go unnoticed, which creates possibilities for forgery of financial documents, payments, academic certificates, or legal documents \cite{Kumar2025RealTimeFraud}.\\
+
+\noindent Significant advances have been made in recent times in the area of digital document forensics using artificial intelligence, machine learning, Optical Character Recognition (OCR), and computer vision technologies. In contrast to analyzing document metadata or document text alone, contemporary forensic methods allow structural as well as visual properties of the document text to be analyzed together. Font metadata gives vital information on the fonts embedded in the document, whereas visual analysis at the level of glyphs enables minute distinctions to be made in terms of character shape, stroke style, spacing, and rendering properties. Using such features that are obtained from two complimentary sources, one is able to distinguish between genuine and manipulated documents. It must be noted that such alterations may not be visible to human observers or be picked up by regular OCR tools. Thus, better detection accuracy, explainability, and scalability for automated PDF authentication can be realized \cite{Ahmed2025AIForgeries}.\\
+
+\noindent The rationale behind this work is motivated by the growing use of PDF files as trusted proofs in financial operations, litigation, educational verifications, government administration, and business processes. The stakes get higher and higher as corporations switch from traditional paper-based processes to electronic documents. Significant financial damages, legal issues, identity theft, and reputation damage can occur when altered PDF files are considered valid. Many of the current techniques to verify the integrity of files cannot cope with the problem of text manipulations, and hence there is a clear necessity for intelligent approaches \cite{Nikkel2020Fintech}.\\
+
+\noindent In order to tackle these issues, an automated font matching system has been proposed in this study for the purpose of detecting tampering in PDF documents. This study utilizes a combination of font metadata information with visual feature extraction based on glyph to create a hybrid verification system which will be able to detect discrepancies that could not have been detected by one or the other. Further, machine learning is used to enhance the effectiveness of the process of classification by discovering the relationships among various extracted features. Through this approach, it is expected that the accuracy of the tampering detection will be improved along with providing explanation for the detection process. It is hoped that ultimately a scalable, explainable, and practical solution can be provided to improve the trust in official digital documents, prevent the misuse of official documents, and advance the field of digital document forensics \cite{Kumar2025RealTimeFraud}.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        doc/.style={rectangle, draw, rounded corners, thick, minimum width=2.2cm, minimum height=1.5cm, align=center, fill=gray!8, font=\small},
+        node distance=0.3cm
+    ]
+        \node[doc] (bank) {Bank\\Statements};
+        \node[doc, right=of bank] (invoice) {Invoices};
+        \node[doc, right=of invoice] (vehicle) {Vehicle\\Registrations};
+        \node[doc, right=of vehicle] (cert) {Academic\\Certificates};
+        \node[doc, right=of cert] (legal) {Legal\\Contracts};
+    \end{tikzpicture}
+    \caption{Common categories of official PDF documents that are frequently targeted for text tampering.}
+    \label{fig:doc_types_at_risk}
+\end{figure}
+
+\section{Problem Statement}
+
+The vast majority of users have no knowledge of the amount of information that can be included into a Portable Document Format (PDF) document. Aside from the visible text, each letter in a PDF document has various attributes which include the font family, the font size, the font style, the color, the positioning of the character, the encoding data, among others. If the document was written during a single edit session using the same application, the attributes would be the same for the entire document. \\
+
+\noindent Nevertheless, in the event that a PDF file is later edited following its initial creation through the process of inserting, deleting, or altering text with varying software programs, minor inconsistencies may arise. Discrepancies in font rendering software, font embedding techniques, character encoding technologies, and metadata generation methods employed by different software programs may cause newly added text to exhibit minor discrepancies in comparison with the original text. So even if the same font name and size is used, the font metadata, the appearance of the glyphs, the spacing and position of the characters and rendering attributes may be different. Such inconsistencies are usually invisible to the naked eye and will most likely be missed by anyone trying to do a manual analysis. Nonetheless, these differences are present within the PDF file and can be discerned through font metadata and glyph analysis.\\
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        box/.style={rectangle, draw, rounded corners, thick, minimum width=5cm, minimum height=2.6cm, align=left, inner sep=8pt},
+        node distance=1.5cm
+    ]
+        \node[box, fill=green!8] (genuine) {
+            \textbf{Genuine Document}\\[4pt]
+            Dominant font: Helvetica\\
+            Dominant font ratio: 1.0\\
+            Font size variance: 0.0
+        };
+        \node[box, fill=red!8, right=of genuine] (tampered) {
+            \textbf{Tampered Document}\\[4pt]
+            Fonts found: Helvetica, Times-Bold\\
+            Dominant font ratio: 0.65\\
+            Font size variance: 0.61
+        };
+        \draw[->, thick] (genuine) -- node[above]{text edited} (tampered);
+    \end{tikzpicture}
+    \caption{Example of font metadata change observed after an invoice was tampered with using the font-change method (data reported in Chapter~4).}
+    \label{fig:font_mismatch_example}
+\end{figure}
+
+\noindent Currently, no automated solution has been developed for detecting such subtle discrepancies together with providing explanations of the changes made in a form comprehensible by humans. The methods that exist for document authentication are mostly based either on image processing, where the analysis is done using the visual features of document pages, or on text processing, where the text is analyzed separately from the image. This leads to the loss of important evidence that may be found in font meta data and visual character properties. Also, most of the current solutions provide only binary classification whether the document is legitimate or tampered, but do not give the reason behind this classification or any regions on the page that were taken into consideration during this process. These weaknesses allow some of the tampered documents, like forged bank statements, fake academic certificates, modified contracts and invoices, etc., to pass through routine verification without being noticed.\\
+
+\noindent Forgery of digital documents can have many consequences for individuals and institutions. One is the risk of financial loss due to fraudulent actions, another one being possible legal disputes from the usage of manipulated documents as evidence. In addition, the reputation and credibility of institutions and their ability to build public trust may suffer from accepting forged documents. Thus, the necessity to have an automatic and trustworthy PDF forgery detector has become very relevant. It should be able to analyze documents on character level and font level, look for inconsistencies in the embedded metadata and visual glyphs, localize suspicious text regions and give explanations for all the decisions made regarding forgery detection.
+
+\subsection{Goals of the Research}
+
+The primary goal of the research work presented here is to construct a credible and explainable solution for PDF document text forgery detection based on the font matching approach. In order to achieve this goal, the following particular objectives need to be reached:
+
+\begin{itemize}
+    \item To build a PDF parser and font extractor system able to get text, fonts meta-data (font type, font size, and font encoding) as well as PDF document structure.
+    \item To develop a visual glyph analysis component which will turn text into images and analyze the stroke width, curvature, and other features of font glyphs.
+    \item To implement a font matching component which will compare font metadata and visual font glyphs features in the whole document and identify text blocks that do not match the majority patterns.
+    \item To introduce a hybrid verification system that will use both font analysis and an OCR-based semantic verification of numeric and key texts; the OCR-based component is treated as an optional, future-scope extension and is not part of the final evaluated detection pipeline.
+    \item To estimate performance of the system using accuracy, precision, recall, and F1 score. The explainability of the system should also be evaluated based on visual highlighting of the tampered texts.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        stepbox/.style={rectangle, draw, rounded corners, thick, minimum width=2.2cm, minimum height=1.4cm, align=center, fill=blue!6, font=\small},
+        node distance=0.3cm
+    ]
+        \node[stepbox] (o1) {Objective 1\\Parsing \&\\Font Extraction};
+        \node[stepbox, right=of o1] (o2) {Objective 2\\Glyph\\Analysis};
+        \node[stepbox, right=of o2] (o3) {Objective 3\\Font\\Matching};
+        \node[stepbox, right=of o3] (o4) {Objective 4\\Hybrid\\Verification};
+        \node[stepbox, right=of o4] (o5) {Objective 5\\Performance\\Evaluation};
+
+        \draw[->, thick] (o1) -- (o2);
+        \draw[->, thick] (o2) -- (o3);
+        \draw[->, thick] (o3) -- (o4);
+        \draw[->, thick] (o4) -- (o5);
+    \end{tikzpicture}
+    \caption{The five research objectives shown as a sequential pipeline, from font extraction through to final performance evaluation.}
+    \label{fig:objectives_pipeline}
+\end{figure}
+
+\section{Significance and Contribution}
+
+There is an increasing amount of research focusing on digital document security in recent times; nevertheless, studies specifically dedicated to font-based forensic analysis of forged PDF documents are rather scarce. Even though there have been many techniques suggested to detect image forgery, OCR text extraction, and document tampering through image-based or text-based methods, the problem of detection of minute changes made in texts based on analysis of fonts embedded into PDF files has not received enough attention yet. Consequently, any inconsistencies caused by text editing become unnoticed by the means of existing techniques. This research is aimed at closing this research gap by exploring the possibilities of font-based forensic analysis of forged PDF documents.\\
+
+\noindent Several key contributions have been made by the proposed system. First, a hybrid detection approach has been developed in which the font metadata analysis and the visual glyph comparison technique are used to detect inconsistencies in the PDF document. Unlike most of the existing solutions, evidence collected from both the internal structure of the document and the visual properties of the characters is considered to enhance the accuracy of the process. Moreover, an explanation for the results produced by the system has been provided. Unlike most existing systems that make only a binary classification, the suspicious text regions are highlighted along with the confidence scores associated with these regions. Finally, the proposed framework can be applied to various types of documents, including financial documents, certificates, legal documents, governmental documents, and vehicle registration documents.\\
+
+\noindent The suggested system has potential applications in a variety of practical cases where the verification of the document is essential. Financial organizations can use the system to authenticate bank statements and payment documentation provided by the customer. Educational institutions can use the system to ensure that educational documents such as certificates and transcripts provided by applicants are authentic. Organizations can use the system to authenticate administrative documents, whereas digital forensic professionals can use it for document manipulation cases investigated as part of fraud. Automation of document authentication will reduce time spent on document analysis and improve detection accuracy.\\
+
+\noindent The research work offers a valuable contribution to the domains of digital forensics and document security. The research builds upon the prior work done in the domain of OCR, deep learning, document image analysis, and font analysis by integrating forensic data from metadata analysis as well as glyph-level analysis into a single detection system. With its explainability feature and accurate localization of suspicious text, the suggested method helps the existing research move in the direction of developing an improved solution for text tampering detection in digital PDF documents.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        src/.style={rectangle, draw, rounded corners, thick, minimum width=3.2cm, minimum height=1.3cm, align=center, fill=blue!6, font=\small},
+        merge/.style={rectangle, draw, rounded corners, thick, minimum width=3.6cm, minimum height=1.3cm, align=center, fill=orange!10, font=\small},
+        outbox/.style={rectangle, draw, rounded corners, thick, minimum width=3.6cm, minimum height=1.9cm, align=center, fill=green!8, font=\small},
+        node distance=1cm
+    ]
+        \node[src] (font) {Font Metadata\\Analysis};
+        \node[src, below=of font] (glyph) {Visual Glyph\\Analysis};
+        \node[merge, right=1.6cm of font, yshift=-0.75cm] (hybrid) {Hybrid\\Detection Model};
+        \node[outbox, right=1.6cm of hybrid] (result) {Explainable Output\\Highlighted regions\\+ confidence score};
+
+        \draw[->, thick] (font) -- (hybrid);
+        \draw[->, thick] (glyph) -- (hybrid);
+        \draw[->, thick] (hybrid) -- (result);
+    \end{tikzpicture}
+    \caption{The proposed contribution: font metadata and visual glyph analysis are combined into a single hybrid model that produces explainable, localized detection results, benefiting banks, universities, government agencies, and forensic investigators alike.}
+    \label{fig:contribution_overview}
+\end{figure}

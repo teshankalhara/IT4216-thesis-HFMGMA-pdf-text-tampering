@@ -1,0 +1,145 @@
+\section{Introduction}
+
+This chapter looks at the existing research around detecting forged or tampered PDF documents. Document counterfeit has emerged as a major concern in financial, governmental and academic arenas for the last decade and many different methods are being developed to combat it. The five main aspects that are covered in the review are OCR-based and deep learning forgery detection, explainable AI for tampered text, PDF structure and font analysis, classical glyph and printer forensics, and financial document forgery detection. The key research gaps in the end of the chapter are identified which directly motivate the approach of this study.
+
+\section{Theoretical Background}
+
+PDF forgery is essentially a matter of identifying if the content of a document has been altered without being noticed. It's more difficult than it sounds. A PDF is a very well-structured file, containing text, fonts, and layout information, which does not leave any traces of manipulation on the pixel level in contrast to a natural photo. Even if the PDF document looks perfectly normal on the screen, the person who edited it may leave minor inconsistencies in the PDF document.
+
+This research is based on the following main technical concepts:
+
+\begin{itemize}
+    \item PDF document structure and embedded font metadata
+    \item  Comparing fonts by their fingerprints and glyph consistency analysis.
+    \item Forensics of printers and print-copying machines.
+    \item Optical Character Recognition (OCR)
+    \item Image processing techniques
+    \item Deep learning for doc forensics
+\end{itemize}
+
+\noindent The font information contained within the PDF is called font metadata. Glyph analysis takes it one step further by examining the rendered glyph of each character to determine if there is anything that looks amiss. If someone has inserted text with another tool or font, the metadata and/or the glyph shapes may give them away.\\
+
+\noindent OCR is used to extract text that can be read from a rendered PDF page. It all adds up to computer vision and a technology that relies on deep learning models trained to detect manipulation patterns to make up the technical backbone of document forensics today.\\
+
+\section{Previous Studies}
+
+\noindent Next, eight studies which are directly relevant to the purposes of this research are reviewed. Every study is analyzed on what they accomplished, the methods they employed, the results they discovered, and their shortcomings in relation to automated PDF text tampering detection.\\
+
+\subsection{Document Forgery Detection Using OCR and Deep Learning}
+
+\noindent Cohen and Afzal (2025) addressed the issue of detecting high-level document forgeries using OCR and deep learning. One of the problems they quickly stumbled upon was the fact that typical CNNs are more attuned to the content of a document than its construction. A CNN trained with document images learns to identify the documents' content rather than indications of manipulation. To get around this, the authors proposed a method that actively suppresses the semantic content of the document so the model is forced to pay attention to the subtle noise and resampling artifacts left behind by tampering.\\
+
+\noindent Their techniques were based on applying OCR to find the location of the text in the document and passing these areas into a deep network which was trained specifically to detect manipulation traces instead of reading the text. The results were good, particularly with the financial documents where certain numbers or amounts had been skewed. This method was much superior to the visual analysis only systems.\\
+
+\noindent Nevertheless, this still considers the problem as an image level task. Does not consider the internal structure of a PDF document and the metadata of fonts. It is therefore prone to overlook subtle edits that occur digitally but have no visual impact on the document, such as a change in the font data that is not obvious to the reader \cite{Cohen2025Forgery}.\\
+
+\subsection{AI-Based Hybrid Detection Using OCR and CNNs}
+
+\noindent Ahmed and Khan (2025) suggested a framework to detect forgeries based on both the visual content and the extracted text from a document. Their argument was that neither of these strategies would be effective without the other. Changes which would not look semantically suspicious (but were made fraudulently) can be detected with text extraction, but not with image analysis alone, and vice versa.\\
+
+\noindent Their system's ability to use CNN image forensics alongside OCR based semantic checks meant they could identify documents that appeared completely genuine, but contained data that didn't make logical sense, such as a receipt with a total amount that wouldn't match the things listed on the receipt, or a bank statement with dates that didn't make sense. This two-way verification proved to be more effective in combating the forged banking documents.\\
+
+\noindent In their work, they demonstrated the meaningful reduction of false negative rate, when they add a semantic consistency layer on top of the visual analysis layer. But, unlike Cohen and Afzal, their approach does not examine the font level properties of the PDF structure. It can report that something is amiss with the content but it cannot determine that a subtle font substitution or inconsistency at the glyph level has occurred \cite{Ahmed2025AIForgeries}.\\
+
+\subsection{Robust Tampered Text Detection in Document Images}
+
+\noindent Qu et al. (2023) took a different tack in their solution. Instead of comprehending the ideas or organization of a text, they concentrated on the visual quality of the text itself. They found that when text is edited in a document image, a high-frequency feature extraction can measure the changes in the local visual consistency of a document image at the region surrounding the edited text.\\
+
+\noindent The team also identified that the lack of good training data was one of the major obstacles in the field of progress. The existing datasets of forged documents were either too small or not realistic enough to train a powerful detector. For this purpose, they collected a large set of document images with various kinds of tampering and document types, and image quality.\\
+
+\noindent Their approach consisted of text stroke consistency analysis and background noise pattern analysis, and it showed excellent results for detecting splicing and copy-move attacks in document images. There is however a major drawback: the whole procedure is raster-based. It does not have access to the internal structure of the PDF file and is unable to detect any tampering that occurs only in the digital realm without impacting the rendered appearance of the PDF \cite{Qu2023TamperedText}.
+\\
+
+\subsection{Explainable Tampered Text Detection via Multimodal Large Models}
+
+\noindent Most of the research community overlooked an important point made by Luo and Liu (2024): The ability to detect forgeries is not sufficient. To be trusted and usable in legal or financial situations, a detection system must provide a description and justification of what and why it detected.\\
+
+\noindent They created a multimodal approach by associating the visual analysis and language understanding parts to detect the tampered regions and to provide a natural language explanation of the problem. The system might indicate a specific location in the document and state, in unambiguous terms, that the font in that space is different than the remainder of the document, or that the spacing between characters is different than the spacing between the words surrounding it. This type of explainability makes the tool very useful for human auditors who need to validate results and take action upon them.\\
+
+\noindent They found that they got more accurate detection and more trust from users using the multimodal system than from one that gave a binary verdict. The major disadvantage is the large size and high computational cost of the model that renders it hard to deploy in low-resource or real-time applications \cite{Luo2024Explainable}.\\
+
+\subsection{Structural and Layout-Based PDF Forgery Detection}
+
+\noindent Zhang and Wang (2023) chose a more structural approach by examining the structure of the text that is presented on the pages of a PDF. They analyzed layout consistency, text alignment, character spacing and font use patterns in their framework. The basic concept was that a "real" document, created in one run using one application, will have layout properties that are uniform throughout. Sometimes sections are manipulated by the editor; they may have slightly different line spacing, alignment, or font.\\
+
+\noindent Their experimental results were promising. The layout-aware analysis was much superior to image-only techniques, thus validating that structural information is indeed of forensic value. The method was particularly effective at identifying the cases of whole text replacement.\\
+
+\noindent The disadvantage of this is that it is based on the level of layout patterns, not characters/glyphs. It can recognize that one paragraph is different from other paragraphs in the document, but it is not able to identify if this difference is due to a font change at the character level (i.e., the specific paragraph is changed to a different font) \cite{Zhang2023PDFLayout}.\\
+
+\subsection{Font-Level Feature Analysis for Document Authentication}
+
+\noindent A group of researchers led by Chen et al. (2022) came a lot closer to what this research aims to accomplish. They tried and found out if it is possible to know whether a document is forged by utilizing only font level information and the answer was yes. They found that when someone types into a PDF it is highly likely that they will cause inconsistencies in font metadata, glyph shapes, or both.\\
+
+\noindent Typically invisible to the naked eye these are inconsistencies. A human reader would not detect any faults in the document. However, when the text characters are converted to images and visual characteristics such as the width of the strokes, the curvature, and spacing are measured and detected, then the differences become measurable and detectable.\\
+
+\noindent Their approach was able to successfully identify all text regions that were tampered with and had been completely missed by other tools. This work gave solid proof that glyph level feature analysis is one of the most reliable forensic signals that can be used to detect PDF tampering. But their system operated on the font metadata and on the visual glyph. This research provides an accurate and reliable matching mechanism by integrating them together, and the integration of these two mechanisms could enhance the accuracy and reliability of the matching process.
+
+\subsection{Fintech Forensics and Digital Evidence Investigation}
+
+\noindent Nikkel (2020) made a wider analysis of the digital forensic role in the contemporary financial technology environment. His paper discussed various topics such as the difficulties and challenges that bank systems, mobile payments and digital transaction records bring to forensic investigators.\\
+
+\noindent One of the major issues discussed was the importance of using other financial PDF documents like transaction slips, receipts and the like as formal digital artefacts. They are not automatically assumed to be authentic. Nikkel said that there should be automated and systematic tools to verify the authenticity of these documents before they are used as evidence or to make decisions.\\
+
+\noindent The paper also addressed legal and procedural issues in digital forensics, such as the preservation of metadata, the Chain of Custody and the Rules of Evidence that must be satisfied to preserve the integrity of digital evidence in court. Although this work does not recommend a particular detection algorithm, it provides a compelling legal and institutional argument for the need for automated PDF verification tools. It directly inspires practical objectives of this study \cite{Nikkel2020Fintech}.\\
+
+\subsection{Advanced Deep Learning for Real-Time Banking Fraud Detection}
+
+\noindent Kumar and Singh (2025) dealt with the deployment aspect of document fraud detection. Their research realised that a detection system can serve no purpose unless it can be implemented in practical banking situations where documents are uploaded on an ongoing basis and have to be processed within a short time. That is not feasible in that environment to build a very accurate system within a few minutes per document.\\
+
+\noindent To overcome this, they developed and tested lightweight CNN models that were optimised to be as fast as possible without loss of accuracy. Their experiments demonstrated that if you designed carefully they could be a compact model that could classify the financial documents in real time, and that you could still get a real time classification performance that would be competitive with a much larger model.\\
+
+\noindent Their paper is significant as it demonstrates that high performance does not have to be at the cost of fast inference. But, as many deep learning solutions in this area, the models analyzed only the visual content of the documents and not PDF embedded metadata, nor glyph-level consistency checks. The time efficiency of their design principles coupled with the analysis of fonts proposed in this research may yield a fast and accurate system for real time fraud detection \cite{Kumar2025RealTimeFraud}.\\
+
+\subsection{Intrinsic Feature-Based Fraudulent Document Detection}
+
+\noindent One of the earlier systematic attempts to detect forged documents was made by Bertrand et al. (2013), where the features were already present within the document without requiring any external reference font database to be compared with. Their thought was that a true document from one source will vary naturally and consistently in the way that the glyphs are rendered. Those characters that have been substituted by another source will differ measurably from that distribution.\\
+
+\noindent Their system produced a statistical model of what they expected the glyphs to look like in a given document and any glyphs that were not as they expected were marked as possible forgeries. This was an elegant solution as it was self-contained. There was no need to know or have access to the original font that was used, nor to have access to a ground truth version of the document. The system may be able to detect characters that are unusual.\\
+
+\noindent The drawback, though, is that it was created for scanned and printed documents, not digital PDFs. The set of characters generated by the rendering pipeline may look very similar to the originals, despite the fact that the font data is different. Such manipulation would likely be undetected by a glyph-statistics-based detector, so it is crucial to use glyph statistics in conjunction with font metadata analysis \cite{Bertrand2013Intrinsic}.\\
+
+\subsection{Conditional Random Field Model for Font Forgery Detection}
+
+\noindent Later, Bertrand and Gomez-Krämer (2015) built on the previous intrinsic feature work and added a more complex model that was able to consider the context of the character in its surroundings. The important thing to remember was that there are no isolated characters in a document. They're surrounded by other characters in the same font, and other characters that surround them give more information on the appearance of the current character.\\
+
+\noindent Their Conditional Random Field (CRF) model modeled these adjacent character relationships. The model made a decision on whether a single character was suspicious, but took into account the entire local sequence of characters. This greatly improved the ability to catch when a single character was swapped, since the replacement character would be out-of-sync not only for itself, but also with what was nearby it.\\
+
+\noindent The results indicated significant improvement compared to using a standalone glyph analysis. But the model was still tested mainly on the scanned raster documents. This model doesn't embrace the rich fonts, character encoding maps, and glyph identifiers that are embedded in native digital PDF files. Adding it to the CRF-based contextual glyph analysis would probably gain a lot in terms of accuracy in detection \cite{Bertrand2015CRF}.\\
+
+\subsection{Font Recognition for Identity Document Forgery Detection}
+
+\noindent Chernyshova et al. (2019) used a specialized approach of Convolutional Neural Networks for the particular task of identifying font inconsistencies in identity documents, like passports and national ID cards. Their logic was simple: identities are issued by governments, and they tend to use very specific, standard fonts. If a high accuracy classifier has been trained to recognize those fonts, any part of the document that does not match the expected font will be immediately suspicious.\\
+
+\noindent They obtained good classification rates on the identity document test set they tested their CNN-based font recognition system on, and were able to mark their image with regions where the text had been added using a different font. This was a strong finding that, directly, confirmed the presence of one of the best forensic indicators for copying document fraud: font-level features.\\
+
+\noindent The limitation of their work is that they are restricted to a pre-known set of fonts. The advantage of it is that it is used in identity documents, where the typeface is always the same, set by the government. If you have financial PDFs, academic certificates, or other documents that may have many fonts in them, then you wouldn't want to use a fixed font classifier. This research introduces a font matching method based on font consistency in a document instead of a predefined font list to make it more flexible and widely applicable \cite{Chernyshova2018Font}.\\
+
+\subsection{Summary}
+
+\noindent The eleven reports collectively provide a clear picture of the state of the field. Progress has been made in the ability to detect tampering in documents using OCR, deep learning, image forensics, and structural analysis. The combination of a number of signals, such as visual features and semantic content, is always superior to a single approach. Previous work has confirmed that glyph-level inconsistencies and contextual font modeling are consistent forensic features and that more recent deep learning techniques have been developed that allow for these features to be learned automatically from data. Explainability has also become a fundamental requirement for forensic tools to be used in practice, and the development of fast enough systems to run in real-time environments has begun to be taken seriously as well.\\
+
+\noindent Concurrently, this research directly overcomes the limitations of each of the reviewed studies. Most don't look at font metadata and glyph visual features at the same time. Many focus on image level forensics instead of native digital PDF structure. There are currently no classical glyph methods that can retrieve font data embedded in PDF and CNN-based font classifiers require fixed font sets. Very few systems can give an explainable, character level output for a human auditor to act upon. These gaps constitute the focal point of this work.\\
+
+\section{Summary and Research Gap}
+
+\noindent Although the improvement as outlined above has been witnessed, yet there is no widely accepted automated system which can detect slight text tampering inside the native digital PDF. Most tools either look at the visual appearance of a rendered document, or they extract a document's text content from it, but not both at the same time \cite{Qu2023TamperedText,Kumar2025RealTimeFraud}.\\
+
+\noindent A current trend in the literature also partitions the problems of OCR and image forensics into two completely different ones. There is a real need for systems that combine these together into a single pipeline in order to verify whether the text content of a PDF is both visually and structurally coherent with the claim of the encoding \cite{Ahmed2025AIForgeries,Cohen2025Forgery}.\\
+
+\noindent The analysis of font consistency has received little attention so far in the field of digital PDF native forgery. On editing a PDF, the text added may vary in terms of font type, size, encoding, and/or the shape of its glyphs. These differences are consistent forensic indications but most current systems do not have systematic search capabilities. This work aims to fill that void by proposing a font matching approach that matches font metadata and visual characteristics of glyphs at document level to identify and mark the altered regions \cite{Chen2022FontForgery, Zhang2023PDFLayout}.\\
+
+On the basis of all of the material discussed in this chapter, the following specific gaps exist in the literature:
+
+\begin{enumerate}
+    \item The image-based methods are ineffective to identify subtle text manipulation inside native digital PDF documents \cite{Cohen2025Forgery,Qu2023TamperedText}.
+
+    \item Visual differences on the glyph level, which is only detectable by printing and comparing character images, are not captured by metadata-only methods \cite{Chen2022FontForgery,Zhang2023PDFLayout}.
+
+    \item Current font-based approaches are mostly limited to either metadata or visual glyph detection, with few works integrating both aspects into a unified detection system, such as in \cite{Chen2022FontForgery, Zhang2023PDFLayout}.
+
+    \item The classical glyph and printer forensic methods were developed for physical printed and scanned documents, and are not well suited to forgery that occurs entirely within the digital PDF structure \cite{Bertrand2013Intrinsic,Bertrand2015CRF,Chernyshova2018Font}.
+
+    \item Most automated systems do not generate character-level explanations showing exactly which part of the text is being flagged and why, which is crucial for real-world applications in fields such as legal or financial verification and verification in academia \cite{Luo2024Explainable, Nikkel2020Fintech}.
+\end{enumerate}
+
+The need for research as presented in this thesis is evident from these gaps and is to create a system that can solve all five of these limitations in one integrated system. 

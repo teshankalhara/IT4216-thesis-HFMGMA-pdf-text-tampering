@@ -1,0 +1,85 @@
+\section{Conclusion}
+
+In this chapter, the main findings of the study are summarized, and the research objectives stated in Chapter~1 are reflected upon. In this study, an investigation was carried out into whether font metadata and visual glyph features could be combined to build a system that detects tampered text in PDF documents in a way that is both accurate and explainable.
+
+The key findings are summarized below:
+
+\begin{itemize}
+    \item It was found that the consistency of font was a good and reliable indicator of the tampering. A consistent decrease in the dominant font ratio, along with an increase in font size variance was seen when a PDF document was tampered with.
+    \item That a simple and rule-based detection method (based on a single fixed threshold) was not sufficient by itself was demonstrated. In this approach, 24.4\% accuracy could be obtained, as it is hard to map a static rule for the natural variation of the document types.
+    \item A Random Forest classifier was used and it was shown that the accuracy of this type of classifier, which is trained using font metadata and visual glyph features, is much higher and in this case 82.8\% accuracy was obtained. This is proof that the font matching algorithm should be learned from the data, not as a single rule.
+    \item There was a comment that some tampering methods came up with an inaccurate detection result. The changes in font and embedding were detected almost perfectly, with character replacement and spacing alteration being more difficult to detect because they are not directly affecting the font metadata.
+    \item Another thing that was found is that legal contracts would be the most difficult document type to classify accurately due to natural formatting differences that are found in real-world legal documents.
+\end{itemize}
+
+\noindent The results indicate the feasibility of the proposed system of PDF tampering detection based on font level analysis, visual features of glyphs and machine learning, not fixed rules. The findings align with the results in Chapter~2, particularly those of Chen et al. (2022) \cite{Chen2022FontForgery} and offer fresh insights into the differences in the accuracy of detection among the different type of documents and tampering methods.
+
+\section{Contributions of the Study}
+
+Several contributions are made by this research:
+
+\begin{itemize}
+   \item It is demonstrated that font metadata and visual glyph features can be used as complementary signals, each being able to detect tampering cases that the other fails to detect.
+   \item We provide a complete 4-stage pipeline for creating the dataset, extracting font metadata, extracting glyph features, and finally, performing the classification using machine learning, and a synthetic dataset of 2,500 labeled PDFs that can be reused in future research.
+   \item A lightweight, GPU-free detection approach is shown to obtain more than 80 percentage accuracy, indicating that such a system may be deployed in banks, universities, and government's offices to assist in verifying uploaded documents.
+\end{itemize}
+
+\section{Critical Analysis of the Proposed System}
+
+In this part, the proposed system is critically analyzed and its methodological strengths and significant weaknesses are analyzed. This type of self-assessment is deemed to be important because it enables a proper assessment of the value of the work, and provides clear guidance for the improvements that will be discussed later in this chapter.
+
+\subsection{Methodological Strengths}
+
+Several strengths of the proposed approach are identified:
+
+\begin{itemize}
+    \item Intrinsic reference extraction: Baseline font profiles are derived from the document itself and not from an external reference font database, so the system can adapt automatically to a wide variety of document templates without a need to create a set of “known good” fonts.
+    \item Localized bounding boxes are returned along with explicit structural weights, instead of a black box binary genuine-or-tampered output. This is seen as a positive attribute because it provides the human reviewers with evidence, rather than an arbitrary verdict, that can be inspected.
+    \item As was also mentioned in Chapter~3, the detection pipeline can operate efficiently on standard CPU hardware, as the tabular features are engineered instead of having to compare pixels by pixel, rather than a dedicated GPU.
+\end{itemize}
+
+\subsection{Notable Weaknesses}
+
+At the same time, several significant weaknesses are acknowledged, and these are treated as constructive points for improvement rather than as failures of the overall approach:
+
+\begin{itemize}
+    \item \textbf{Vulnerability to more advanced digital forgeries:} In the dataset generation scripts shown in Appendix~A, tampered text is inserted by directly appending new strings onto the page's canvas layer. This method produces clear, easily detectable metadata anomalies. A more sophisticated attacker, however, could extract the original font dictionary from a PDF, inject replacement text directly into the internal content stream, and structurally match the surrounding metadata. This kind of advanced forgery was not simulated or evaluated in the current study, so it remains untested how well the system would perform against it.
+    \item \textbf{An unmeasured semantic verification layer:} As described in Chapter~3, an optional OCR-based semantic verification layer was proposed, intended to flag logical inconsistencies such as a column of totals that does not match its listed items. However, this component was never fully integrated into the final evaluation, meaning its contribution to overall detection accuracy remains unmeasured. This is considered a gap between what the system was designed to do and what was actually tested.
+    \item \textbf{A noisy glyph spacing metric:} In the current glyph feature extraction pipeline, text blocks are rendered as a single unified image layer before contour analysis is performed. In documents where letter spacing is tight or characters overlap, this makes it difficult to isolate individual glyph shapes accurately, which introduces noise into the extracted visual features. This limitation is believed to be a contributing factor behind the comparatively lower 78.0\% accuracy observed for character-replacement tampering, discussed in Chapter~4.
+\end{itemize}
+
+\noindent The proposed system is believed to constitute a practically useful and reasonably secure means of securing the security of PDF documents and, when taken together, the central concept, that is, using font metadata in addition to visual glyph analysis, offers an increased level of security against tampering with text in a way that is meaningful for document security. However, it is acknowledged that the present system is effective in the detection of relatively simple forgeries and that more sophisticated and subtly disguised forgeries may necessitate the improvements as described in the following parts.
+
+\section{Limitations}
+\label{sec:limitations}
+
+While the objectives of the study were achieved, certain limitations must be acknowledged:
+
+\begin{itemize}
+    \item The data used was a synthetic dataset, rather than actual documents, because of privacy issues with financial, legal, and academic documents. Thus, the dataset may not fully represent the variation of authentic documents.
+    \item The tampering methods simulated in this study were limited to four methods (font change, character replacement, spacing change, and embedding mismatch) and not tested are more sophisticated or hybrid forms of tampering, such as content-stream-level forgeries discussed above.
+    \item Lower accuracy was found with legal contracts indicating that the set of features used may not work as well as with documents that are naturally less structured.
+    \item This study did not fully evaluate the semantic verification step, which is optional, and described in Chapter~3, so the added benefit was not measured.
+    \item Note that glyph-based features were not always clearly separated in the visual feature extraction process especially in dense or overlapping text blocks where character spacing is not sufficiently wide, which is thought to have introduced noise to the glyph-based features.
+\end{itemize}
+
+\noindent These limitations are seen as opportunities for improvement in future research rather than as failures of the current approach.
+
+\section{Recommendations for Future Research}
+
+Based on the findings and limitations described above, the following directions are recommended for future work:
+
+\begin{itemize}
+    \item The dataset is suggested to be expanded with real world PDF documents obtained with due permissions, to test the model under more real world conditions. Concrete pathways towards this include establishing data-sharing partnerships with financial institutions, universities, or government offices willing to provide anonymised or redacted document samples under a formal research agreement, and utilising existing open-source forensic document databases where available, so that a proportion of genuine and tampered examples reflect authentic real-world formatting rather than synthetically generated variation alone.
+    \item More advanced and/or AI-generated tampering techniques are suggested to be simulated and tested.
+    \item Document-type-specific models are recommended to be explored in detail, especially in legal contracts, as it is natural that the format differs from other types of documents.
+    \item The implementation and evaluation of the OCR based semantic verification layer is recommended, for the purpose of determining the extent of additional accuracy that can be gained when used with font and glyph analysis.
+    \item The system is recommended to be tested in real-time performance so that it can be tested and evaluated in deployment for real banking or verification systems.
+    \item Also, the individual glyph extraction step is recommended to be strengthened, especially for text with tight or overlapping character spacing, for measuring visual features with lesser noise.
+    \item It is recommended that the testing methodology be expanded to test more advanced font forgery methods, such as re-using an existing font dictionary and adding replacement text directly to the PDF content stream; such methods would be much more difficult to detect than those simulated in this study.
+\end{itemize}
+
+\section{Final Remarks}
+
+This study has made a significant contribution to the knowledge of text tampering detection in PDF documents based on a hybrid font metadata and glyph matching method. There has been evidence that the combination of these two types of features, and the analysis of these features using machine learning, not fixed rules, results in a significant boost in accuracy of detection. The results will be useful to researchers in digital forensics and institutions that make use of PDF documents as trusted records, like banks, universities, and government agencies. This work is expected to serve as a solid foundation for the development of further research on explainable and reliable PDF document verification systems.
+ 
